@@ -21,22 +21,92 @@ public class MenuService {
     private final MenuRepository menuRepository;
 
     public MenuDto create(Long restId, MenuDto dto) {
-        throw new RuntimeException("not implemented");
+      Optional<Restaurant> optionalRestaurant
+        = restaurantRepository.findById(restId);
+
+      if (optionalRestaurant.isEmpty()) {
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+      }
+
+      Menu newEntity = new Menu(
+        dto.getName(),
+        dto.getPrice(),
+        optionalRestaurant.get()
+      );
+
+      return MenuDto.fromEntity(menuRepository.save(newEntity));
     }
 
     public List<MenuDto> readAll(Long restId) {
-        throw new RuntimeException("not implemented");
+        if (!restaurantRepository.existsById(restId)) {
+          throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        List<MenuDto> menuDtoList = new ArrayList<>();
+        for (Menu entity: menuRepository.findAllByRestaurantId(restId)) {
+          menuDtoList.add(MenuDto.fromEntity(entity));
+        }
+
+        return menuDtoList;
     }
 
     public MenuDto read(Long restId, Long menuId) {
-        throw new RuntimeException("not implemented");
+        Optional<Menu> optionalMenu = menuRepository.findById(menuId);
+
+        if (optionalMenu.isEmpty()) {
+          throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        Menu menu = optionalMenu.get();
+        if (!menu.getRestaurant().getId().equals(restId)) {
+          throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
+        return MenuDto.fromEntity(menu);
     }
 
     public MenuDto update(Long restId, Long menuId, MenuDto dto) {
-        throw new RuntimeException("not implemented");
+      Optional<Menu> optionalMenu = menuRepository.findById(menuId);
+
+      if (optionalMenu.isEmpty()) {
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+      }
+
+      Menu menu = optionalMenu.get();
+      if (!menu.getRestaurant().getId().equals(restId)) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      }
+
+      menu.setName(dto.getName());
+      menu.setPrice(dto.getPrice());
+      return MenuDto.fromEntity(menuRepository.save(menu));
     }
 
     public void delete(Long restId, Long menuId) {
-        throw new RuntimeException("not implemented");
+      Optional<Menu> optionalMenu = menuRepository.findById(menuId);
+
+      if (optionalMenu.isEmpty()) {
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+      }
+
+      Menu menu = optionalMenu.get();
+      if (!menu.getRestaurant().getId().equals(restId)) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      }
+
+      menuRepository.deleteById(restId);
     }
+
+    // 중복된 내용 메서드로 뽑아보기 (그리 길지 않아서 굳이 메서드로 만들 필요는 없었다.)
+  private Menu getMenuById(Long restId, Long menuId) {
+    Optional<Menu> optionalMenu
+      = menuRepository.findById(menuId);
+    if (optionalMenu.isEmpty())
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+    Menu menu = optionalMenu.get();
+    if (!menu.getRestaurant().getId().equals(restId))
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+    return menu;
+  }
 }

@@ -3,10 +3,18 @@ package com.example.restaurant;
 import com.example.restaurant.dto.RestaurantDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-
+/*
+POST /restaurant -> 새로운 레스토랑 데이터 (CREATE)
+GET /restaurant -> 모든 레스토랑 데이터 (READ ALL)
+GET /restaurant/{id} -> id를 가진 레스토랑 데이터(READ)
+PUT /restaurant/{id} -> id의 위치에 전달된 레스토랑 데이터 (UPDATE)
+DELETE /restaurant/{id} -> id의 위치의 삭제할 레스토랑 데이터 (DELETE)
+*/
 @Slf4j
 @RestController
 @RequestMapping("/restaurant")
@@ -16,40 +24,36 @@ public class RestaurantController {
 
     @PostMapping
     public RestaurantDto create(
-            @RequestBody
-            RestaurantDto dto
+            @RequestBody RestaurantDto dto
     ) {
-        throw new RuntimeException("not implemented");
+//        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED);
+        return service.create(dto);
     }
 
     @GetMapping
     public List<RestaurantDto> readAll() {
-        throw new RuntimeException("not implemented");
+        return service.readAll();
     }
 
     @GetMapping("/{id}")
     public RestaurantDto read(
-            @PathVariable("id")
-            Long id
+            @PathVariable("id") Long id
     ) {
-        throw new RuntimeException("not implemented");
+        return service.read(id);
     }
 
     @PutMapping("/{id}")
     public RestaurantDto update(
-            @PathVariable("id")
-            Long id,
-            @RequestBody
-            RestaurantDto dto
+            @PathVariable("id") Long id,
+            @RequestBody RestaurantDto dto
     ) {
-        throw new RuntimeException("not implemented");
+        return service.update(id, dto);
     }
 
     @DeleteMapping("/{id}")
     public void delete(
-            @PathVariable("id")
-            Long id
+            @PathVariable("id") Long id
     ) {
-        throw new RuntimeException("not implemented");
+        service.delete(id);
     }
 }

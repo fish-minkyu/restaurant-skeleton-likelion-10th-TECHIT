@@ -16,20 +16,17 @@ public class MenuController {
 
     @PostMapping
     public MenuDto create(
-            @PathVariable("restId")
-            Long restId,
-            @RequestBody
-            MenuDto dto
+            @PathVariable("restId") Long restId,
+            @RequestBody MenuDto dto
     ) {
-        throw new RuntimeException("not implemented");
+        return service.create(restId, dto);
     }
 
     @GetMapping
     public List<MenuDto> readAll(
-            @PathVariable("restId")
-            Long restId
+            @PathVariable("restId") Long restId
     ) {
-        throw new RuntimeException("not implemented");
+        return service.readAll(restId);
     }
 
     @GetMapping("/{menuId}")
@@ -39,7 +36,7 @@ public class MenuController {
             @PathVariable("menuId")
             Long menuId
     ) {
-        throw new RuntimeException("not implemented");
+        return service.read(restId, menuId);
     }
 
     @PutMapping("/{menuId}")
@@ -51,7 +48,7 @@ public class MenuController {
             @RequestBody
             MenuDto dto
     ) {
-        throw new RuntimeException("not implemented");
+        return service.update(restId, menuId, dto);
     }
 
     @DeleteMapping("/{menuId}")
@@ -61,6 +58,6 @@ public class MenuController {
             @PathVariable("menuId")
             Long menuId
     ) {
-        throw new RuntimeException("not implemented");
+        service.delete(restId, menuId);
     }
 }

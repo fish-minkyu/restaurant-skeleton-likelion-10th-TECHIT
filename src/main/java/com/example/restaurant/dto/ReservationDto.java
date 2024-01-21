@@ -3,9 +3,6 @@ package com.example.restaurant.dto;
 import com.example.restaurant.entity.Reservation;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Getter
 @ToString
 @NoArgsConstructor

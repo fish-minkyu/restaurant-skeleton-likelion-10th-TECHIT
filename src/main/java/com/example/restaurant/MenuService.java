@@ -97,14 +97,16 @@ public class MenuService {
       menuRepository.deleteById(restId);
     }
 
-    // 중복된 내용 메서드로 뽑아보기 (그리 길지 않아서 굳이 메서드로 만들 필요는 없었다.)
+  // 중복된 내용 메서드로 뽑아보기 (그리 길지 않아서 굳이 메서드로 만들 필요는 없었다.)
   private Menu getMenuById(Long restId, Long menuId) {
     Optional<Menu> optionalMenu
       = menuRepository.findById(menuId);
+    // 찾는 Menu가 없다면 에러 던지기
     if (optionalMenu.isEmpty())
       throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 
     Menu menu = optionalMenu.get();
+    // 찾는 Menu가 해당 레스토랑과 일치하지 않다면 에러 던지기
     if (!menu.getRestaurant().getId().equals(restId))
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     return menu;

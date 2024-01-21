@@ -36,6 +36,7 @@ public class RestaurantService {
     }
 
     public List<RestaurantDto> readAll() {
+        // foreach 방식
 //        List<RestaurantDto> restaurantDtoList = new ArrayList<>();
 //
 //        List<Restaurant> restaurantList = repository.findAll();
@@ -55,18 +56,21 @@ public class RestaurantService {
     }
 
     public RestaurantDto read(Long id) {
-        Optional<Restaurant> optionalRestaurant = repository.findById(id);
+        // 이때까지 해왔던 기존 방식
+/*        Optional<Restaurant> optionalRestaurant = repository.findById(id);
 
         if (optionalRestaurant.isEmpty()) {
           throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
-//        return RestaurantDto.fromEntity(optionalRestaurant.get());
+        return RestaurantDto.fromEntity(optionalRestaurant.get());*/
 
+        // Optional 메소드를 이용한 방식
       // Optional.map(), Optional.orElseThrow()
         return repository.findById(id)
           // .map(entity -> RestaurantDto.fromEntity(entity))
           .map(RestaurantDto::fromEntity)
+          // orElstThrow의 기본 에러 옵션은 500 에러 옵션이다.
           .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 

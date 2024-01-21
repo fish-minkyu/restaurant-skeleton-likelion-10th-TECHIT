@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,8 +57,40 @@ public class ReservationService {
     }
 
     // 3. 같은 일자, 예약 시간엔 추가 예약이 불가하다.
+    // 우선 날짜 기준으로 예약 정보 조회
+    List<Reservation> dateReserves =
+      reservationRepository.findAllByRestaurantIdAndDate(restId, dto.getDate());
+    // 24시간 중 예약된 시간을 파악하기 위한 boolean[]
+    boolean[] reservable = new boolean[24];
+    // 예약 가능으로 채워넣고(true)
+    Arrays.fill(reservable, true);
+    // 영업 시간 내에만 예약 가능하다 설정
+    // Ex) 영업시간 17시 ~ 23시이면 16시까지와 24시는 false로 재할당
+    for (int i = 0; i < restaurant.getOpenHours(); i++) {
+      reservable[i] = false;
+    }
 
+    for (int i = restaurant.getCloseHours(); i < 24; i++) {
+      reservable[i] = false;
+    }
 
+    // 각각 예약 정보를 바탕으로
+    for (Reservation entity: dateReserves) {
+      // 시간단위 예약 불가능 정보를 갱신
+      for (int i = 0; i < entity.getDuration(); i++) {
+        reservable[entity.getReserveHour() + i] = false;
+      }
+    }
+
+    // 이번 예약 정보를 바탕으로
+    for (int i = 0; i < dto.getDuration(); i++) {
+      // 만약 예약하려는 시간대가 이미 예약 되었다면
+      if (reservable[dto.getReserveHour() + i])
+        // 예약 불가능
+        throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+    }
+
+    // 예약이 가능하다면 새 예약을 받을 객체를 준비한다.
     Reservation newEntity = new Reservation(
       dto.getDate(),
       dto.getReserveHour(),
@@ -66,6 +99,7 @@ public class ReservationService {
       restaurant
     );
 
+    // 저장한 결과를 바탕으로 응답을 반환해준다.
     return ReservationDto.fromEntity(reservationRepository.save(newEntity));
   }
 
@@ -78,21 +112,5 @@ public class ReservationService {
     }
 
     return reservationDtoList;
-  }
-
-  public ReservationDto read() {
-    throw new Error("later");
-  }
-
-  // UPDATE
-  public RestaurantDto update() {
-    throw new Error("later");
-  }
-
-
-  // DELETE
-  public void delete() {
-
-    throw new Error("later");
   }
 }

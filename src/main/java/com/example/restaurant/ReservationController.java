@@ -18,8 +18,8 @@ public class ReservationController {
   // CREATE
   @PostMapping
   public ReservationDto create( // 13:30분쯤 강의 다시 듣기
-    @PathVariable("restId") Long restId,
-    @RequestBody ReservationDto dto
+    @PathVariable("restId") Long restId, // PathVariable: URL 상의 변수를 찾아 넣어주는 것
+    @RequestBody ReservationDto dto // RequestBody: HTTP 요청에 있는 Body 부분을 해석해서 넣어주는 것
   ) {
 
     return service.create(restId, dto);
@@ -32,8 +32,4 @@ public class ReservationController {
   ) {
     return service.readAll(restId);
   }
-
-  // UPDATE
-
-  // DELETE
 }
